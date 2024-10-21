@@ -2,11 +2,10 @@ import axios from "../../axios";
 
 const addTrx = async (trxObj) => {
   try {
-    if (localStorage.getItem("user")) {
-      await axios.post("/trx", trxObj);
-    }
+    console.log("If met");
+    await axios.post("/trx", trxObj);
   } catch (error) {
-    console.log(error);
+    console.log("error trx: ", error);
   }
 };
 
@@ -36,22 +35,18 @@ const getAllWopList = async () => {
 };
 
 const updateTrx = async (trxObj) => {
-  if (localStorage.getItem("user")) {
-    try {
-      await axios.put("/trx", trxObj);
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    await axios.put("/trx", trxObj);
+  } catch (error) {
+    console.log(error);
   }
 };
 
 const deleteTrx = async (trxObj) => {
-  if (localStorage.getItem("user")) {
-    try {
-      await axios.delete("/trx", trxObj);
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    await axios.delete("/trx", trxObj);
+  } catch (error) {
+    console.log(error);
   }
 };
 

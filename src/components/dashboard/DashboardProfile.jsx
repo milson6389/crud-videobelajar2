@@ -1,13 +1,15 @@
-import ProfileImage from "../../assets/img/profile.png";
 import { useState } from "react";
-import useUserStore from "../../store/userStore";
-import PhoneInput from "../form/PhoneInput";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { update } from "../../store/redux/slices/user";
+
+import PhoneInput from "../form/PhoneInput";
+import ProfileImage from "../../assets/img/profile.png";
 
 const DashboardProfile = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const updateUser = useUserStore((state) => state.update);
-  const loggedInUserInfo = useUserStore((state) => state.user);
+  const loggedInUserInfo = useSelector((state) => state.user.user);
   const [toggleShow, setToggleShow] = useState(false);
   const setToggleShowHandler = (e) => {
     e.preventDefault();
@@ -53,12 +55,7 @@ const DashboardProfile = () => {
     setIsPasswordMatch(true);
     setIsValidPhone(true);
 
-    if (
-      fullName !== "" &&
-      phoneData !== "" &&
-      password !== "" &&
-      password2 == password
-    ) {
+    if (fullName !== "" && phoneData !== "" && password !== "" && password2 == password) {
       const tempUser = {
         nama: fullName,
         email: email,
@@ -66,7 +63,7 @@ const DashboardProfile = () => {
         password: password,
       };
       if (confirm("Update User Info ?")) {
-        updateUser(tempUser);
+        dispatch(update({ userObj: tempUser }));
         navigate("/profile");
       }
     } else {
@@ -97,12 +94,7 @@ const DashboardProfile = () => {
   return (
     <div className="flex flex-col items-start p-3 border border-slate-300 rounded-md bg-white w-full">
       <div className="flex justify-start gap-5 md:gap-10 w-full">
-        <img
-          src={ProfileImage}
-          alt="profile_image"
-          className="w-[100px]"
-          loading="lazy"
-        />
+        <img src={ProfileImage} alt="profile_image" className="w-[100px]" loading="lazy" />
         <div className="flex flex-col items-start gap-3">
           <h1 className="text-2xl">{loggedInUserInfo.nama}</h1>
           <p className="text-md">{loggedInUserInfo.email}</p>
@@ -110,10 +102,7 @@ const DashboardProfile = () => {
         </div>
       </div>
 
-      <form
-        onSubmit={updateUserHandler}
-        className="flex flex-col justify-between w-full my-5"
-      >
+      <form onSubmit={updateUserHandler} className="flex flex-col justify-between w-full my-5">
         <div className="flex flex-col mb-3">
           <label htmlFor="name" className="focus:text-primary">
             Nama Lengkap <span className="text-red-500">*</span>
@@ -126,9 +115,7 @@ const DashboardProfile = () => {
             onChange={(e) => setFullNameHandler(e)}
             className="h-10 border px-1 border-slate-300 rounded-md focus:border focus:border-primary"
           />
-          {!isValidName && (
-            <span className="text-red-500">*Nama tidak boleh kosong</span>
-          )}
+          {!isValidName && <span className="text-red-500">*Nama tidak boleh kosong</span>}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="email">
@@ -142,9 +129,7 @@ const DashboardProfile = () => {
             disabled
             className="h-10 border px-1 border-slate-300 rounded-md focus:border focus:border-primary"
           />
-          {!isValidEmail && (
-            <span className="text-red-500">*Email tidak boleh kosong</span>
-          )}
+          {!isValidEmail && <span className="text-red-500">*Email tidak boleh kosong</span>}
         </div>
         <PhoneInput
           setPhoneData={setPhoneDataHandler}
@@ -164,19 +149,10 @@ const DashboardProfile = () => {
             onChange={(e) => setPasswordHandler(e)}
             className="h-10 px-1 w-full border rounded-md"
           />
-          <button
-            onClick={setToggleShowHandler}
-            className="absolute top-8 end-2"
-          >
-            {toggleShow ? (
-              <i className="fa-solid fa-eye"></i>
-            ) : (
-              <i className="fa-solid fa-eye-slash"></i>
-            )}
+          <button onClick={setToggleShowHandler} className="absolute top-8 end-2">
+            {toggleShow ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
           </button>
-          {!isValidPassword && (
-            <span className="text-red-500">*Kata Sandi tidak boleh kosong</span>
-          )}
+          {!isValidPassword && <span className="text-red-500">*Kata Sandi tidak boleh kosong</span>}
         </div>
         <div className="flex flex-col items-start mb-3 relative">
           <label htmlFor="password2">
@@ -190,30 +166,14 @@ const DashboardProfile = () => {
             onChange={(e) => setPassword2Handler(e)}
             className="h-10 px-1 w-full border rounded-md"
           />
-          <button
-            onClick={setToggleShowHandler}
-            className="absolute top-8 end-2"
-          >
-            {toggleShow ? (
-              <i className="fa-solid fa-eye"></i>
-            ) : (
-              <i className="fa-solid fa-eye-slash"></i>
-            )}
+          <button onClick={setToggleShowHandler} className="absolute top-8 end-2">
+            {toggleShow ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
           </button>
-          {!isValidPassword2 && (
-            <span className="text-red-500">*Kata Sandi tidak boleh kosong</span>
-          )}
-          {!isPasswordMatch && (
-            <span className="text-red-500">
-              *Kata Sandi & Konfirmasi Kata Sandi tidak sama
-            </span>
-          )}
+          {!isValidPassword2 && <span className="text-red-500">*Kata Sandi tidak boleh kosong</span>}
+          {!isPasswordMatch && <span className="text-red-500">*Kata Sandi & Konfirmasi Kata Sandi tidak sama</span>}
         </div>
         <div className="flex justify-end">
-          <button
-            type="submit"
-            className="text-white bg-primary px-5 py-3 rounded-md w-full md:w-24"
-          >
+          <button type="submit" className="text-white bg-primary px-5 py-3 rounded-md w-full md:w-24">
             Simpan
           </button>
         </div>

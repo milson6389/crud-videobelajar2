@@ -1,15 +1,17 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/redux/slices/user";
+
 import Logo from "../../assets/img/logo.png";
 import Profile from "../../assets/img/profile.png";
-import useUserStore from "../../store/userStore";
 
 const NavBar = () => {
+  const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-  const logout = useUserStore((state) => state.logout);
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const navMenu = useRef(null);
 
   const clickedOutsideHandler = (e) => {
@@ -31,7 +33,7 @@ const NavBar = () => {
 
   const logoutHandler = () => {
     if (confirm("Logout ?")) {
-      logout();
+      dispatch(logout());
       setIsMobile(false);
       onPageChangeHandler();
       navigate("/login");

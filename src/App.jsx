@@ -4,8 +4,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./components/layout/Root";
 import Public from "./components/layout/Public";
 import Private from "./components/layout/Private";
-import useCourseStore from "./store/courseStore";
-import useTrxStore from "./store/trxStore";
+
+import { useDispatch } from "react-redux";
+import { getAllCourse, getAllPaidCourse } from "./store/redux/slices/course";
+import { getAllWop, getAllTrx } from "./store/redux/slices/trx";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -19,10 +21,7 @@ const Payment = lazy(() => import("./pages/Payment"));
 const Status = lazy(() => import("./pages/Status"));
 
 function App() {
-  const getAllCourse = useCourseStore((state) => state.getAllCourse);
-  const getAllPaidCourse = useCourseStore((state) => state.getAllPaidCourse);
-  const getAllWop = useTrxStore((state) => state.getAllWop);
-  const getAllTrx = useTrxStore((state) => state.getAllTrx);
+  const dispatch = useDispatch();
 
   const router = createBrowserRouter([
     {
@@ -107,10 +106,10 @@ function App() {
   ]);
 
   useEffect(() => {
-    getAllCourse();
-    getAllPaidCourse();
-    getAllWop();
-    getAllTrx();
+    dispatch(getAllCourse());
+    dispatch(getAllPaidCourse());
+    dispatch(getAllWop());
+    dispatch(getAllTrx());
   }, []);
 
   return <RouterProvider router={router} />;

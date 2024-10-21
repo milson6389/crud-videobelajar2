@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { register } from "../store/redux/slices/user";
+import PhoneInput from "../components/form/PhoneInput";
 import Google from "../assets/img/google_icon.webp";
 
-import { useRef, useState } from "react";
-import useUserStore from "../store/userStore";
-import PhoneInput from "../components/form/PhoneInput";
-
 const Register = () => {
-  const register = useUserStore((state) => state.register);
+  const dispatch = useDispatch();
 
   const [toggleShow, setToggleShow] = useState(false);
   const [isValidName, setIsValidName] = useState(true);
@@ -61,7 +61,7 @@ const Register = () => {
         no_hp: phoneData,
         password: passVal,
       };
-      register(tempUser);
+      dispatch(register({ userObj: tempUser }));
       navigate("/");
     } else {
       if (nameVal == "") {

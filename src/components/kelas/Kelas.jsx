@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { resetFilter, filteredClass } from "../../store/redux/slices/course";
 import KelasList from "./KelasList";
-import useCourseStore from "../../store/courseStore";
 
 const Kelas = () => {
+  const dispatch = useDispatch();
+  const dataKelas = useSelector((state) => state.course.classes);
+
   const navLinks = [
     {
       id: 1,
@@ -37,15 +41,11 @@ const Kelas = () => {
     },
   ];
 
-  const dataKelas = useCourseStore((state) => state.classes);
-  const filterKelas = useCourseStore((state) => state.filteredClass);
-  const resetFilter = useCourseStore((state) => state.resetFilter);
-
   const [activeIdx, setActiveIdx] = useState(1);
   const setActiveHandler = (id, ctg = "") => {
     setActiveIdx(id);
-    resetFilter();
-    filterKelas(ctg);
+    dispatch(resetFilter());
+    dispatch(filteredClass({ category: ctg }));
   };
 
   return (

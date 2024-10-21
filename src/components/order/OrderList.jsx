@@ -1,8 +1,8 @@
-import useTrxStore from "../../store/trxStore";
+import { useSelector } from "react-redux";
 import OrderListItem from "./OrderListItem";
 
 const OrderList = () => {
-  const allTrx = useTrxStore((state) => state.trxHistory);
+  const allTrx = useSelector((state) => state.trx.trxHistory);
   return (
     <div className="md:m-2">
       {allTrx.length > 0 &&

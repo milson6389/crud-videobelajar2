@@ -1,8 +1,8 @@
-import useCourseStore from "../../store/courseStore";
+import { useSelector } from "react-redux";
 import CourseListItem from "./CourseListItem";
 
 const CourseList = () => {
-  const allPaidClass = useCourseStore((state) => state.paidCourse);
+  const allPaidClass = useSelector((state) => state.course.paidCourse);
 
   return (
     <div className="md:m-2">

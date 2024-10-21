@@ -1,14 +1,15 @@
 import { useState } from "react";
-import Footer from "../components/layout/Footer";
+import { useDispatch } from "react-redux";
+import { resetCourseFilter, filteredCourse } from "../store/redux/slices/course";
+
+import Card from "../components/ui/Card";
 import DashboardNavbar from "../components/dashboard/DashboardNavbar";
 import DashboardFilter from "../components/dashboard/DashboardFilter";
-import Card from "../components/ui/Card";
 import CourseList from "../components/course/CourseList";
-import useCourseStore from "../store/courseStore";
+import Footer from "../components/layout/Footer";
 
 const Classes = () => {
-  const resetCourseFilter = useCourseStore((state) => state.resetCourseFilter);
-  const filterCourse = useCourseStore((state) => state.filteredCourse);
+  const dispatch = useDispatch();
   const [query, setQuery] = useState("");
   const navLinks = [
     {
@@ -30,8 +31,8 @@ const Classes = () => {
 
   const setQueryHandler = (keyword) => {
     setQuery(keyword);
-    resetCourseFilter();
-    filterCourse(keyword);
+    dispatch(resetCourseFilter());
+    dispatch(filteredCourse({ keyword: keyword }));
   };
   return (
     <>
@@ -39,11 +40,7 @@ const Classes = () => {
         <div className="flex flex-col md:flex-row w-full gap-5 md:gap-20">
           <DashboardNavbar />
           <Card className="w-full">
-            <DashboardFilter
-              navData={navLinks}
-              queries={setQueryHandler}
-              isCategoryFilterOn={false}
-            />
+            <DashboardFilter navData={navLinks} queries={setQueryHandler} isCategoryFilterOn={false} />
             <CourseList />
           </Card>
         </div>

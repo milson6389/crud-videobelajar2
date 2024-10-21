@@ -1,17 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import Google from "../assets/img/google_icon.webp";
 import { useRef, useState } from "react";
-import useUserStore from "../store/userStore";
+import { useDispatch } from "react-redux";
+import { login } from "../store/redux/slices/user";
+
+import Google from "../assets/img/google_icon.webp";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [toggleShow, setToggleShow] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
   const emailInput = useRef();
   const passwordInput = useRef();
   const navigate = useNavigate();
-
-  const login = useUserStore((state) => state.login);
 
   const setToggleShowHandler = (e) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ const Login = () => {
         email: emailVal,
         password: passVal,
       };
-      login(tempUser);
+      dispatch(login({ userObj: tempUser }));
       navigate("/");
     } else {
       if (emailVal == "") {

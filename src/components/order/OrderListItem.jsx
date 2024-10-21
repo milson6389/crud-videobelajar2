@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useCourseStore from "../../store/courseStore";
+import { useSelector } from "react-redux";
 import Card from "../ui/Card";
 
 const OrderListItem = ({ data }) => {
@@ -22,7 +22,7 @@ const OrderListItem = ({ data }) => {
     currency: "IDR",
   });
 
-  const courseInfo = useCourseStore((state) => state.classes).find(
+  const courseInfo = useSelector((state) => state.course.classes).find(
     (cls) => cls.id == data.kelasId
   );
 

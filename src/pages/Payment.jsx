@@ -1,37 +1,30 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getWOPDetailByCode, updateTrx, getAllTrx, getWopGuide } from "../store/redux/slices/trx";
+import { addToPaidCourse, getAllPaidCourse } from "../store/redux/slices/course";
+
+import Card from "../components/ui/Card";
 import KelasDetailPackage from "../components/kelas/KelasDetailPackage";
 import KelasPaymentProgress from "../components/kelas/KelasPaymentProgress";
-import Card from "../components/ui/Card";
-import useCourseStore from "../store/courseStore";
-import useTrxStore from "../store/trxStore";
 import TrxGuideAccordion from "../components/trx/TrxGuideAccordion";
-import { useEffect } from "react";
 
 const Payment = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const allTrx = useTrxStore((state) => state.trxHistory);
+  const allTrx = useSelector((state) => state.trx.trxHistory);
   const currentTrx = allTrx.find((x) => x.id == id);
-  const kelasData = useCourseStore((state) => state.classes).find(
-    (x) => x.id == currentTrx.kelasId
-  );
-  const setWopInfo = useTrxStore((state) => state.getWOPDetailByCode);
-
-  const classPackage = useCourseStore((state) => state.classPackage);
-  const updateTrx = useTrxStore((state) => state.updateTrx);
-  const getAllTrx = useTrxStore((state) => state.getAllTrx);
-  const addCourse = useCourseStore((state) => state.addToPaidCourse);
-  const getCourse = useCourseStore((state) => state.getAllPaidCourse);
-  const isPending = useTrxStore((state) => state.selectedWOP.isMaintenance);
-  const getWopGuide = useTrxStore((state) => state.getWopGuide);
-  const dataPaymentGuide = useTrxStore((state) => state.paymentStepGuide);
+  const isPending = useSelector((state) => state.trx.selectedWOP).isMaintenance;
+  const dataPaymentGuide = useSelector((state) => state.trx.paymentStepGuide);
+  const currentTrxWopInfo = useSelector((state) => state.trx.selectedWOP);
+  const kelasData = useSelector((state) => state.course.classes).find((x) => x.id == currentTrx.kelasId);
+  const classPackage = useSelector((state) => state.course.classPackage);
 
   useEffect(() => {
-    setWopInfo(currentTrx.wopCode);
-    getWopGuide(currentTrx.trxType);
+    dispatch(getWOPDetailByCode({ code: currentTrx.wopCode }));
+    dispatch(getWopGuide({ type: currentTrx.trxType }));
   }, [currentTrx.wopCode, currentTrx.trxType]);
-
-  const currentTrxWopInfo = useTrxStore((state) => state.selectedWOP);
 
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -45,15 +38,15 @@ const Payment = () => {
       status: status,
       paidDt: new Date().toLocaleString(),
     };
-    await updateTrx(trx);
-    await getAllTrx();
+    dispatch(updateTrx({ trxObj: trx }));
+    dispatch(getAllTrx());
     if (!isPending) {
-      await addCourse(Number(currentTrx.kelasId));
-      await getCourse();
+      dispatch(addToPaidCourse({ courseId: Number(currentTrx.kelasId) }));
+      dispatch(getAllPaidCourse());
     }
     setTimeout(() => {
       navigate(`/status/${id}`);
-    }, 500);
+    }, 250);
   };
 
   const rollbackHandler = () => {
@@ -70,15 +63,8 @@ const Payment = () => {
               <section>
                 <h1 className="font-bold text-xl mb-3">Metode Pembayaran</h1>
                 <Card className="mb-5 flex flex-col justify-center items-center gap-3">
-                  <img
-                    className="w-[50px]"
-                    src={currentTrxWopInfo.img}
-                    alt={currentTrxWopInfo.title}
-                    loading="lazy"
-                  />
-                  <p className="font-bold">
-                    Bayar melalui {currentTrxWopInfo.title}
-                  </p>
+                  <img className="w-[50px]" src={currentTrxWopInfo.img} alt={currentTrxWopInfo.title} loading="lazy" />
+                  <p className="font-bold">Bayar melalui {currentTrxWopInfo.title}</p>
                   <div className="flex items-center gap-3">
                     <p className="text-slate-500">{currentTrx.vaNo}</p>
                     <button className="text-red-500">Salin</button>
@@ -98,11 +84,7 @@ const Payment = () => {
                 <hr />
                 <div className="flex justify-between items-start my-3 font-bold">
                   <p>Total Pembayaran</p>
-                  <p className="text-primary ">
-                    {currencyFormatter.format(
-                      currentTrx.price + currentTrx.admin
-                    )}
-                  </p>
+                  <p className="text-primary ">{currencyFormatter.format(currentTrx.price + currentTrx.admin)}</p>
                 </div>
               </section>
               <div className="flex flex-col md:flex-row items-center gap-3">
@@ -130,11 +112,7 @@ const Payment = () => {
             </Card>
           </div>
           <Card className="w-full md:w-2/5">
-            <KelasDetailPackage
-              data={kelasData}
-              packages={classPackage}
-              isReadOnly={true}
-            />
+            <KelasDetailPackage data={kelasData} packages={classPackage} isReadOnly={true} />
           </Card>
         </div>
       </main>
