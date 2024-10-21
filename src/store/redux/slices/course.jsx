@@ -84,14 +84,14 @@ const courseSlice = createSlice({
       state.classes = [...storedData];
     },
     filteredCourse: (state, action) => {
-      const courses = state.classes;
+      const courses = state.paidCourse;
       let keyword = action.payload?.keyword || "";
       if (keyword !== "") {
         const filtered = courses.filter((c) => c.title.toLowerCase().includes(keyword.toLowerCase()));
         state.paidCourse = [...filtered];
       }
     },
-    resetCourseFilter: () => {
+    resetCourseFilter: (state) => {
       const storedData = JSON.parse(localStorage.getItem("course"));
       state.paidCourse = [...storedData];
     },
