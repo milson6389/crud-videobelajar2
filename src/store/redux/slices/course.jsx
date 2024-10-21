@@ -2,12 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import courseApi from "../../../services/api/courseApi";
 
 let initialState = {
-  paidCourse: localStorage.getItem("course")
-    ? JSON.parse(localStorage.getItem("course"))
-    : [],
-  classes: localStorage.getItem("kelas")
-    ? JSON.parse(localStorage.getItem("kelas"))
-    : [],
+  paidCourse: localStorage.getItem("course") ? JSON.parse(localStorage.getItem("course")) : [],
+  classes: localStorage.getItem("kelas") ? JSON.parse(localStorage.getItem("kelas")) : [],
   classPackage: [
     {
       id: 1,
@@ -56,29 +52,20 @@ let initialState = {
   ],
 };
 
-export const getAllCourse = createAsyncThunk(
-  "course/getAllCourse",
-  async () => {
-    const courseData = await courseApi.getAllCourseList();
-    return courseData;
-  }
-);
+export const getAllCourse = createAsyncThunk("course/getAllCourse", async () => {
+  const courseData = await courseApi.getAllCourseList();
+  return courseData;
+});
 
-export const addToPaidCourse = createAsyncThunk(
-  "course/addToPaidCourse",
-  async ({ courseId }) => {
-    const paidCourse = await courseApi.addCourseToPaidCourse(courseId);
-    return paidCourse;
-  }
-);
+export const addToPaidCourse = createAsyncThunk("course/addToPaidCourse", async ({ course }) => {
+  const paidCourse = await courseApi.addCourseToPaidCourse(course.courseId);
+  return paidCourse;
+});
 
-export const getAllPaidCourse = createAsyncThunk(
-  "course/getAllPaidCourse",
-  async () => {
-    const paidCourseData = await courseApi.getAllPaidCourse();
-    return paidCourseData;
-  }
-);
+export const getAllPaidCourse = createAsyncThunk("course/getAllPaidCourse", async () => {
+  const paidCourseData = await courseApi.getAllPaidCourse();
+  return paidCourseData;
+});
 
 const courseSlice = createSlice({
   name: "course",
@@ -100,9 +87,7 @@ const courseSlice = createSlice({
       const courses = state.classes;
       let keyword = action.payload?.keyword || "";
       if (keyword !== "") {
-        const filtered = courses.filter((c) =>
-          c.title.toLowerCase().includes(keyword.toLowerCase())
-        );
+        const filtered = courses.filter((c) => c.title.toLowerCase().includes(keyword.toLowerCase()));
         state.paidCourse = [...filtered];
       }
     },
@@ -124,6 +109,5 @@ const courseSlice = createSlice({
   },
 });
 
-export const { filteredClass, resetFilter, filteredCourse, resetCourseFilter } =
-  courseSlice.actions;
+export const { filteredClass, resetFilter, filteredCourse, resetCourseFilter } = courseSlice.actions;
 export default courseSlice.reducer;

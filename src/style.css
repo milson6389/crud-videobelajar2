@@ -5,8 +5,7 @@ body {
 .or {
   text-align: center;
   font-size: 20px;
-  background: linear-gradient(#f2f2f2 0 0) left,
-    linear-gradient(#f2f2f2 0 0) right;
+  background: linear-gradient(#f2f2f2 0 0) left, linear-gradient(#f2f2f2 0 0) right;
   background-size: 40% 1px;
   background-repeat: no-repeat;
 }
@@ -16,8 +15,7 @@ body {
   width: 100%;
   min-height: 400px;
   height: "fit-content";
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("./assets/img/hero.jpg");
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./assets/img/hero.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -27,4 +25,15 @@ body {
 
 main {
   min-height: 68vh;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

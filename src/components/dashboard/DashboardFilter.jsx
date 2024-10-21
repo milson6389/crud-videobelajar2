@@ -1,11 +1,6 @@
 import { useRef, useState } from "react";
 
-const DashboardFilter = ({
-  navData,
-  queries,
-  categories,
-  isCategoryFilterOn = true,
-}) => {
+const DashboardFilter = ({ navData, queries, categories, isCategoryFilterOn = true }) => {
   const search = useRef();
   const [activeIdx, setActiveIdx] = useState(1);
   const setActiveHandler = (id, code = "") => {
@@ -22,7 +17,7 @@ const DashboardFilter = ({
     <>
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div className="m-2 w-full md:w-3/4">
-          <ul className="flex text-nowrap overflow-x-auto justify-start items-center gap-3">
+          <ul className="flex text-nowrap overflow-x-auto justify-start items-center gap-3 no-scrollbar">
             {navData.map((link) => {
               return (
                 <button
@@ -30,9 +25,7 @@ const DashboardFilter = ({
                   key={link.id}
                   to={link.target}
                   className={`${
-                    link.id === activeIdx
-                      ? "text-secondary font-bold border-b-secondary border-b-2"
-                      : "text-black"
+                    link.id === activeIdx ? "text-secondary font-bold border-b-secondary border-b-2" : "text-black"
                   }`}
                 >
                   {link.title}

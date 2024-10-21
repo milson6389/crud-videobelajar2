@@ -3,9 +3,7 @@ import trxApi from "../../../services/api/trxApi";
 
 let initialState = {
   wop: localStorage.getItem("wop") ? JSON.parse(localStorage.getItem("wop")) : [],
-
   paymentStepGuide: localStorage.getItem("wopGuide") ? JSON.parse(localStorage.getItem("wopGuide")) : [],
-
   trxHistory: localStorage.getItem("trx") ? JSON.parse(localStorage.getItem("trx")) : [],
 
   selectedWOP: {
@@ -32,7 +30,7 @@ export const getAllTrx = createAsyncThunk("trx/getAllTrx", async () => {
 export const addTrx = createAsyncThunk("trx/addTrx", async ({ trxObj }) => {
   const newTrxData = {
     id: trxObj.id,
-    email: userInfo,
+    email: trxObj.email,
     kelasId: trxObj.kelasId,
     title: trxObj.title,
     trxType: trxObj.trxType,
@@ -42,7 +40,6 @@ export const addTrx = createAsyncThunk("trx/addTrx", async ({ trxObj }) => {
     vaNo: trxObj.vaNo,
   };
   const newTrx = await trxApi.addTrx(newTrxData);
-  console.log(newTrx);
   return newTrx;
 });
 
@@ -61,7 +58,7 @@ const trxSlice = createSlice({
   initialState,
   reducers: {
     setSelectedWOP: (state, action) => {
-      const wopObj = action.payload?.wopObj;
+      const wopObj = action.payload.wopObj;
       state.selectedWOP = { ...state.selectedWOP, ...wopObj };
     },
     getWOPDetailByCode: (state, action) => {
@@ -108,7 +105,7 @@ const trxSlice = createSlice({
         state.trxHistory = temp;
       }
     },
-    resetFilter: () => {
+    resetFilter: (state) => {
       state.trxHistory = JSON.parse(localStorage.getItem("trx"));
     },
   },
@@ -120,7 +117,6 @@ const trxSlice = createSlice({
       state.trxHistory = action.payload;
     });
     builder.addCase(addTrx.fulfilled, (state, action) => {
-      console.log("here");
       state.trxHistory.push(action.payload);
     });
     builder.addCase(updateTrx.fulfilled, (state, action) => {
@@ -149,5 +145,6 @@ export const {
   filterTrxByTitle,
   resetFilter,
   resetTrx,
+  setIsLoading,
 } = trxSlice.actions;
 export default trxSlice.reducer;

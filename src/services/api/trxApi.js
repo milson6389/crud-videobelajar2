@@ -2,7 +2,6 @@ import axios from "../../axios";
 
 const addTrx = async (trxObj) => {
   try {
-    console.log("If met");
     await axios.post("/trx", trxObj);
   } catch (error) {
     console.log("error trx: ", error);
@@ -23,6 +22,40 @@ const getAllTrxList = async () => {
   }
 };
 
+const updateTrx = async (trxObj) => {
+  try {
+    const existingTrxes = JSON.parse(localStorage.getItem("trx"));
+    await axios.put("/trx", trxObj);
+    const trxes = existingTrxes.map((trx) => {
+      if (trx.id == trxObj.id) {
+        return {
+          ...trx,
+          ...trxObj,
+        };
+      } else {
+        return trx;
+      }
+    });
+    localStorage.setItem("trx", JSON.stringify(trxes));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteTrx = async (trxObj) => {
+  try {
+    const existingTrxes = JSON.parse(localStorage.getItem("trx"));
+    console.log(trxObj);
+    const deletedTrx = await axios.delete("/trx", {
+      data: trxObj,
+    });
+    const trxes = existingTrxes.filter((trx) => trx.id != deletedTrx.id);
+    localStorage.setItem("trx", JSON.stringify(trxes));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getAllWopList = async () => {
   try {
     const apiResponse = await axios.get("/payment");
@@ -31,22 +64,6 @@ const getAllWopList = async () => {
   } catch (error) {
     console.log(error);
     return [];
-  }
-};
-
-const updateTrx = async (trxObj) => {
-  try {
-    await axios.put("/trx", trxObj);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const deleteTrx = async (trxObj) => {
-  try {
-    await axios.delete("/trx", trxObj);
-  } catch (error) {
-    console.log(error);
   }
 };
 

@@ -50,14 +50,10 @@ const Kelas = () => {
 
   return (
     <div className="my-10">
-      <h1 className="text-3xl font-bold">
-        Koleksi Video Pembelajaran Unggulan
-      </h1>
-      <p className="text-sm">
-        Jelajahi Dunia Pengetahuan Melalui Pilihan Kami!
-      </p>
+      <h1 className="text-3xl font-bold">Koleksi Video Pembelajaran Unggulan</h1>
+      <p className="text-sm">Jelajahi Dunia Pengetahuan Melalui Pilihan Kami!</p>
       <div className="mt-5">
-        <ul className="flex text-nowrap overflow-x-auto justify-start items-center gap-3">
+        <ul className="flex text-nowrap overflow-x-auto justify-start items-center gap-3 no-scrollbar">
           {navLinks.map((link) => {
             return (
               <Link
@@ -65,9 +61,7 @@ const Kelas = () => {
                 key={link.id}
                 to={link.target}
                 className={`${
-                  link.id === activeIdx
-                    ? "text-secondary font-bold border-b-secondary border-b-2"
-                    : "text-black"
+                  link.id === activeIdx ? "text-secondary font-bold border-b-secondary border-b-2" : "text-black"
                 }`}
               >
                 {link.title}

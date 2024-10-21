@@ -1,6 +1,6 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTrx, addTrx, updateTrx } from "../store/redux/slices/trx";
+import { getAllTrx, addTrx } from "../store/redux/slices/trx";
 import KelasDetailPackage from "../components/kelas/KelasDetailPackage";
 import KelasPaymentProgress from "../components/kelas/KelasPaymentProgress";
 import Card from "../components/ui/Card";
@@ -8,18 +8,15 @@ import KelasWOPAccordion from "../components/kelas/KelasWOPAccordion";
 
 const Checkout = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const allKelasData = useSelector((state) => state.course.classes);
+  const kelasData = useSelector((state) => state.course.classes).find((cls) => cls.id == id);
   const classPackage = useSelector((state) => state.course.classPackage);
   const wopData = useSelector((state) => state.trx.wop);
   const selectedWOP = useSelector((state) => state.trx.selectedWOP);
   const adminFee = selectedWOP.admin;
   const userInfo = useSelector((state) => state.user.user);
-
-  const kelasData = allKelasData.find((dt) => dt.id == id);
 
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -29,39 +26,21 @@ const Checkout = () => {
   const coursePrice = kelasData.price * 1000;
 
   const checkoutHandler = async () => {
-    if (location.state?.trx) {
-      const existingData = location.state.trx;
-      const updatedData = {
-        ...existingData,
-        trxType: selectedWOP.trxType,
-        wopCode: selectedWOP.code,
-        admin: adminFee,
-        vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(userInfo.no_hp.slice(0, 3), "0")}`,
-      };
-      dispatch(updateTrx({ trxObj: updatedData }));
-      dispatch(getAllTrx());
-      setTimeout(() => {
-        navigate(`/payment/${existingData.id}`);
-      }, 250);
-    } else {
-      const generatedId = +new Date();
-      const newTrx = {
-        id: generatedId,
-        kelasId: id,
-        title: kelasData.title,
-        email: userInfo.email,
-        trxType: selectedWOP.trxType,
-        wopCode: selectedWOP.code,
-        price: kelasData.price * 1000,
-        admin: adminFee,
-        vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(userInfo.no_hp.slice(0, 3), "0")}`,
-      };
-      dispatch(addTrx({ trxObj: newTrx }));
-      dispatch(getAllTrx());
-      // setTimeout(() => {
-      //   navigate(`/payment/${generatedId}`);
-      // }, 250);
-    }
+    const generatedId = +new Date();
+    const newTrx = {
+      id: generatedId,
+      kelasId: kelasData.id,
+      title: kelasData.title,
+      email: userInfo.email,
+      trxType: selectedWOP.trxType,
+      wopCode: selectedWOP.code,
+      price: kelasData.price * 1000,
+      admin: adminFee,
+      vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(userInfo.no_hp.slice(0, 3), "0")}`,
+    };
+    dispatch(addTrx({ trxObj: newTrx }));
+    dispatch(getAllTrx());
+    navigate(`/payment/${generatedId}`);
   };
 
   return (

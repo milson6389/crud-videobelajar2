@@ -1,7 +1,7 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getWOPDetailByCode, updateTrx, getAllTrx, getWopGuide } from "../store/redux/slices/trx";
+import { getWOPDetailByCode, updateTrx, getAllTrx, deleteTrx, getWopGuide } from "../store/redux/slices/trx";
 import { addToPaidCourse, getAllPaidCourse } from "../store/redux/slices/course";
 
 import Card from "../components/ui/Card";
@@ -12,19 +12,22 @@ import TrxGuideAccordion from "../components/trx/TrxGuideAccordion";
 const Payment = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const allTrx = useSelector((state) => state.trx.trxHistory);
-  const currentTrx = allTrx.find((x) => x.id == id);
-  const isPending = useSelector((state) => state.trx.selectedWOP).isMaintenance;
+  const currentTrx = useLoaderData();
   const dataPaymentGuide = useSelector((state) => state.trx.paymentStepGuide);
   const currentTrxWopInfo = useSelector((state) => state.trx.selectedWOP);
-  const kelasData = useSelector((state) => state.course.classes).find((x) => x.id == currentTrx.kelasId);
+  const kelasData = useSelector((state) => state.course.classes).find((x) => x.id == Number(currentTrx.kelasId));
   const classPackage = useSelector((state) => state.course.classPackage);
 
   useEffect(() => {
     dispatch(getWOPDetailByCode({ code: currentTrx.wopCode }));
+  }, [currentTrx.wopCode]);
+
+  useEffect(() => {
     dispatch(getWopGuide({ type: currentTrx.trxType }));
-  }, [currentTrx.wopCode, currentTrx.trxType]);
+  }, [currentTrx.trxType]);
+
+  const selectedWOP = useSelector((state) => state.trx.selectedWOP);
+  const isPending = selectedWOP.isMaintenance;
 
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -34,23 +37,26 @@ const Payment = () => {
   const checkoutHandler = async () => {
     const status = isPending ? "INP" : "DONE";
     const trx = {
-      id: id,
+      id: currentTrx.id,
       status: status,
       paidDt: new Date().toLocaleString(),
     };
     dispatch(updateTrx({ trxObj: trx }));
     dispatch(getAllTrx());
     if (!isPending) {
-      dispatch(addToPaidCourse({ courseId: Number(currentTrx.kelasId) }));
+      dispatch(addToPaidCourse({ course: { courseId: Number(currentTrx.kelasId) } }));
       dispatch(getAllPaidCourse());
     }
-    setTimeout(() => {
-      navigate(`/status/${id}`);
-    }, 250);
+
+    navigate(`/status/${currentTrx.id}`);
   };
 
   const rollbackHandler = () => {
-    navigate(`/checkout/${kelasData.id}`, { state: { trx: currentTrx } });
+    const rollbackTrx = {
+      id: Number(currentTrx.id),
+    };
+    dispatch(deleteTrx({ trxObj: rollbackTrx }));
+    navigate(`/checkout/${currentTrx.kelasId}`);
   };
 
   return (

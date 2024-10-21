@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 const KelasDetailPackage = ({ data, packages, isReadOnly = false }) => {
   const navigate = useNavigate();
   const onClickBuyHandler = () => {
-    navigate(`/checkout/${data.id}`);
+    setTimeout(() => {
+      navigate(`/checkout/${data.id}`);
+    }, 500);
   };
 
   return (
@@ -14,20 +16,13 @@ const KelasDetailPackage = ({ data, packages, isReadOnly = false }) => {
           <p className="text-primary">Rp {data.price}K</p>
           <p className="text-slate-400 line-through">Rp {data.price * 2}K</p>
         </div>
-        <span className="bg-warning text-white rounded-md px-2 ">
-          Diskon 50%
-        </span>
+        <span className="bg-warning text-white rounded-md px-2 ">Diskon 50%</span>
       </div>
 
       {!isReadOnly && (
         <>
-          <p className="text-sky-500 text-sm">
-            Penawaran spesial tersisa 2 hari lagi!
-          </p>
-          <button
-            onClick={onClickBuyHandler}
-            className="w-full bg-primary text-white rounded-md my-3"
-          >
+          <p className="text-sky-500 text-sm">Penawaran spesial tersisa 2 hari lagi!</p>
+          <button onClick={onClickBuyHandler} className="w-full bg-primary text-white rounded-md my-3">
             Beli Sekarang
           </button>
         </>
@@ -37,10 +32,7 @@ const KelasDetailPackage = ({ data, packages, isReadOnly = false }) => {
       <div className="grid grid-cols-2 gap-5 my-3">
         {packages.map((cls) => {
           return (
-            <span
-              key={cls.id}
-              className="text-slate-500 flex items-center gap-2 text-sm"
-            >
+            <span key={cls.id} className="text-slate-500 flex items-center gap-2 text-sm">
               {cls.content}
             </span>
           );
