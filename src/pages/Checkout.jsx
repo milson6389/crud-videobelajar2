@@ -40,7 +40,9 @@ const Checkout = () => {
     };
     dispatch(addTrx({ trxObj: newTrx }));
     dispatch(getAllTrx());
-    navigate(`/payment/${generatedId}/${kelasData.id}`);
+    setTimeout(() => {
+      navigate(`/payment/${generatedId}/${kelasData.id}`);
+    }, 1000);
   };
 
   return (
