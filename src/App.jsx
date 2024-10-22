@@ -1,12 +1,14 @@
 import { lazy, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAllCourse, getAllPaidCourse } from "./store/redux/slices/course";
-import { getAllWop, getAllTrx } from "./store/redux/slices/trx";
+import { getAllWop, getAllTrx, getWopGuide, getWOPDetailByCode } from "./store/redux/slices/trx";
 
 import Root from "./components/layout/Root";
 import Public from "./components/layout/Public";
 import Private from "./components/layout/Private";
+import trxApi from "./services/api/trxApi";
+import courseApi from "./services/api/courseApi";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -21,8 +23,6 @@ const Status = lazy(() => import("./pages/Status"));
 
 function App() {
   const dispatch = useDispatch();
-  const allTrx = useSelector((state) => state.trx.trxHistory);
-  const allPaidCourse = useSelector((state) => state.course.paidCourse);
 
   const router = createBrowserRouter([
     {
@@ -63,14 +63,19 @@ function App() {
           ),
         },
         {
-          path: "/payment/:id",
+          path: "/payment/:id/:courseId",
           element: (
             <Private>
               <Payment />
             </Private>
           ),
           loader: async ({ params }) => {
-            return await allTrx.find((trx) => trx.id == params.id);
+            const currTrx = await trxApi.getTrxById(Number(params.id));
+            const currCourse = await courseApi.getCourseById(Number(params.courseId));
+            return {
+              trx: currTrx,
+              course: currCourse,
+            };
           },
         },
         {
@@ -114,6 +119,7 @@ function App() {
     dispatch(getAllWop());
     dispatch(getAllPaidCourse());
     dispatch(getAllTrx());
+    window.scrollTo(0, 0);
   }, []);
 
   return <RouterProvider router={router} />;

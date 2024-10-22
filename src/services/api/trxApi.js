@@ -22,10 +22,20 @@ const getAllTrxList = async () => {
   }
 };
 
+const getTrxById = async (trxId) => {
+  try {
+    const apiResponse = await axios.get(`/trxinfo/${trxId}`);
+    return apiResponse.data.data[0];
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};
+
 const updateTrx = async (trxObj) => {
   try {
     const existingTrxes = JSON.parse(localStorage.getItem("trx"));
-    await axios.put("/trx", trxObj);
+    const updatedTrx = await axios.put("/trx", trxObj);
     const trxes = existingTrxes.map((trx) => {
       if (trx.id == trxObj.id) {
         return {
@@ -37,6 +47,7 @@ const updateTrx = async (trxObj) => {
       }
     });
     localStorage.setItem("trx", JSON.stringify(trxes));
+    return updatedTrx;
   } catch (error) {
     console.log(error);
   }
@@ -45,12 +56,12 @@ const updateTrx = async (trxObj) => {
 const deleteTrx = async (trxObj) => {
   try {
     const existingTrxes = JSON.parse(localStorage.getItem("trx"));
-    console.log(trxObj);
     const deletedTrx = await axios.delete("/trx", {
       data: trxObj,
     });
     const trxes = existingTrxes.filter((trx) => trx.id != deletedTrx.id);
     localStorage.setItem("trx", JSON.stringify(trxes));
+    return deletedTrx;
   } catch (error) {
     console.log(error);
   }
@@ -70,6 +81,7 @@ const getAllWopList = async () => {
 export default {
   addTrx,
   getAllTrxList,
+  getTrxById,
   getAllWopList,
   updateTrx,
   deleteTrx,

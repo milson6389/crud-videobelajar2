@@ -26,6 +26,16 @@ const getAllCourseList = async () => {
   }
 };
 
+const getCourseById = async (courseId) => {
+  try {
+    const apiResponse = await axios.get(`/kelas/${courseId}`);
+    return apiResponse.data.data;
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};
+
 const getAllPaidCourse = async () => {
   if (localStorage.getItem("user")) {
     const userInfo = JSON.parse(localStorage.getItem("user"));
@@ -44,4 +54,5 @@ export default {
   addCourseToPaidCourse,
   getAllCourseList,
   getAllPaidCourse,
+  getCourseById,
 };

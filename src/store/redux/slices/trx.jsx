@@ -15,6 +15,7 @@ let initialState = {
     img: "",
     isMaintenance: false,
   },
+  isLoading: true,
 };
 
 export const getAllWop = createAsyncThunk("trx/getAllWop", async () => {
@@ -50,7 +51,7 @@ export const updateTrx = createAsyncThunk("trx/updateTrx", async ({ trxObj }) =>
 
 export const deleteTrx = createAsyncThunk("trx/deleteTrx", async ({ trxObj }) => {
   const deletedTrx = await trxApi.deleteTrx(trxObj);
-  return deletedTrx;
+  return trxObj;
 });
 
 const trxSlice = createSlice({
@@ -61,8 +62,11 @@ const trxSlice = createSlice({
       const wopObj = action.payload.wopObj;
       state.selectedWOP = { ...state.selectedWOP, ...wopObj };
     },
+    setIsLoadingState: (state, action) => {
+      state.isLoading = action.payload.status;
+    },
     getWOPDetailByCode: (state, action) => {
-      const wopCode = action.payload?.code;
+      const wopCode = action.payload.code;
       const wops = state.wop;
       for (let i = 0; i < wops.length; i++) {
         for (let j = 0; j < wops[i].sub.length; j++) {
@@ -111,10 +115,10 @@ const trxSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAllWop.fulfilled, (state, action) => {
-      state.wop = action.payload;
+      state.wop = [...action.payload];
     });
     builder.addCase(getAllTrx.fulfilled, (state, action) => {
-      state.trxHistory = action.payload;
+      state.trxHistory = [...action.payload];
     });
     builder.addCase(addTrx.fulfilled, (state, action) => {
       state.trxHistory.push(action.payload);
@@ -139,12 +143,12 @@ const trxSlice = createSlice({
 
 export const {
   setSelectedWOP,
+  setIsLoadingState,
   getWOPDetailByCode,
   getWopGuide,
   filterTrxByCategory,
   filterTrxByTitle,
   resetFilter,
   resetTrx,
-  setIsLoading,
 } = trxSlice.actions;
 export default trxSlice.reducer;

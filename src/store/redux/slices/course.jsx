@@ -98,10 +98,10 @@ const courseSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAllCourse.fulfilled, (state, action) => {
-      state.classes = action.payload;
+      state.classes = [...action.payload];
     });
     builder.addCase(getAllPaidCourse.fulfilled, (state, action) => {
-      state.paidCourse = action.payload;
+      state.paidCourse = [...action.payload];
     });
     builder.addCase(addToPaidCourse.fulfilled, (state, action) => {
       state.paidCourse.push(action.payload);
